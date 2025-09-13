@@ -76,6 +76,14 @@ h1 {
   box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
 }
 
+/* sticky header */
+.header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
 .logo-container {
   display: flex;
@@ -104,13 +112,16 @@ h1 {
   align-items: center;
 }
 
+/* nav hover */
 .nav-list li a {
   font-weight: 500;
-  transition: color 0.2s;
+  padding: 6px 12px;
+  transition: all 0.3s;
 }
 
 .nav-list li a:hover {
-  color: var(--hover-blue);
+  background: #fdd600;
+  border-radius: 6px;
 }
 
 .search-box {
@@ -177,12 +188,14 @@ h1 {
 
 .category {
   background: #f2dc99;
-  padding: 1rem 2rem;
-  border-radius: 10px;
+  padding: 10px 16px;
+  margin: 4px;
+  border-radius: 6px;
   font-weight: bold;
   min-width: 120px;
   text-align: center;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
 .category.active {
@@ -190,6 +203,9 @@ h1 {
   border: 2px solid #cfae00;
 }
 
+.category:hover{
+  background-color: #ffe97f;
+}
 /* ==== PRODUCT CARD ==== */
 .product {
   background: var(--soft-bg);
@@ -259,6 +275,11 @@ h1 {
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
+.faq-question:hover {
+  color: var(--blue);
+  cursor: pointer;
+}
+
 /* ==== REGISTER / LOGIN ==== */
 .register-form,
 .login-form {
@@ -298,6 +319,13 @@ h1 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.register-form button:hover,
+.login-form button:hover {
+  background-color: var(--hover-blue);
+  transform: translateY(-2px);
 }
 
 /* ==== DETAIL PAGE ==== */
@@ -431,6 +459,24 @@ h1 {
 
 .cart-btn:hover {
   transform: scale(1.2);
+}
+
+/* logout button */
+.logout-btn {
+  background: none;
+  border: none;
+  color: #0039a6;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  text-decoration: underline;
+}
+
+/* container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 /* ==== RESPONSIVE ==== */

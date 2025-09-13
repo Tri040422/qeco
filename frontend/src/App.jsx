@@ -14,70 +14,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <Layout>
-              <Products />
-            </Layout>
-          }
-        />
-        <Route
-          path="/product/:id"
-          element={
-            <Layout>
-              <ProductDetail />
-            </Layout>
-          }
-        />
-        <Route
-          path="/contact"
-          element={
-            <Layout>
-              <Contact />
-            </Layout>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <Layout>
-              <Cart />
-            </Layout>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Layout>
-              <Register />
-            </Layout>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          }
-        />
-        <Route
-          path="/faq"
-          element={
-            <Layout>
-              <FAQ />
-            </Layout>
-          }
-        />
+        {/* Layout bao quanh tất cả route con */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/faq" element={<FAQ />} />
+        </Route>
       </Routes>
     </Router>
   );
