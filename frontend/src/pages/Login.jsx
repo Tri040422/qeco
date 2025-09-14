@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -15,7 +17,7 @@ const Login = () => {
       });
 
       setMessage("Đăng nhập thành công!");
-      localStorage.setItem("token", res.data.token); // Lưu token để dùng cho API khác
+      login(res.data.user, res.data.token); // ✅ update context
     } catch (err) {
       setMessage(err.response?.data?.message || "Đăng nhập thất bại!");
     }

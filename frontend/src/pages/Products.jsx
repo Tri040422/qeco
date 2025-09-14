@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import products from "../data/products";
 import "../styles/style.css";
+import { useCart } from "../hooks/useCart"; // ✅ lấy hook từ context
 
 const Products = () => {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
+  const { addToCart } = useCart(); // ✅ lấy hàm addToCart
 
   const filteredProducts = products
     .filter((item) => item.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
-      if (sort === "price-asc") return a.priceValue - b.priceValue;
-      if (sort === "price-desc") return b.priceValue - a.priceValue;
+      if (sort === "price-asc") return a.price - b.price;
+      if (sort === "price-desc") return b.price - a.price;
       return 0;
     });
 
@@ -42,7 +44,8 @@ const Products = () => {
       {/* List */}
       <div className="product-list">
         {filteredProducts.map((item) => (
-          <ProductCard key={item.id} data={item} />
+          <ProductCard key={item.id} data={item} addToCart={addToCart} />
+          // ✅ truyền addToCart
         ))}
       </div>
     </section>

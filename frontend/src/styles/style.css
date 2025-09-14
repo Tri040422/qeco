@@ -432,6 +432,38 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
+.contact-section {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.send-btn:hover {
+  background: #45a049;
+}
+
+.map-container {
+  margin-top: 30px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 .bottom-row {
   display: flex;
   justify-content: space-between;

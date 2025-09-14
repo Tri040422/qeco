@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth"; // ✅ import hook
 
-const Header = ({ user, onLogout }) => {
+const Header = () => {
+  const { user, logout } = useAuth(); // ✅ lấy user & logout từ context
+
   return (
     <header className="header sticky">
       <div className="logo-container">
@@ -35,11 +38,12 @@ const Header = ({ user, onLogout }) => {
           <li>
             <Link to="/faq">FAQ</Link>
           </li>
+
           {user ? (
             <>
-              <li>Xin chào, {user.username}</li>
+              <li>Xin chào, {user.name || user.email}</li>
               <li>
-                <button onClick={onLogout} className="logout-btn">
+                <button onClick={logout} className="logout-btn">
                   Đăng xuất
                 </button>
               </li>

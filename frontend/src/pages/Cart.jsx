@@ -2,35 +2,40 @@ import React from "react";
 import { useCart } from "../hooks/useCart";
 
 const Cart = () => {
-  const { cartItems, removeFromCart } = useCart(); // dùng cartItems thay vì cart
+  const { cartItems, removeFromCart, increaseQty, decreaseQty } = useCart();
 
   const total = cartItems.reduce(
-    (sum, item) => sum + (item.qty || 1) * item.price,
+    (sum, item) => sum + item.price * item.quantity,
     0
   );
 
   if (cartItems.length === 0) {
-    return (
-      <section className="cart-section">
-        <h2>Giỏ hàng của bạn</h2>
-        <p>Chưa có sản phẩm nào trong giỏ hàng.</p>
-      </section>
-    );
+    return <h2>🛒 Giỏ hàng trống</h2>;
   }
 
   return (
-    <section className="cart-section">
+    <div>
       <h2>Giỏ hàng của bạn</h2>
-      <ul>
-        {cartItems.map((item) => (
-          <li key={item.id}>
-            {item.name} x {item.qty || 1} = {item.qty || 1 * item.price}₫
-            <button onClick={() => removeFromCart(item.id)}>❌</button>
-          </li>
-        ))}
-      </ul>
+      {cartItems.map((item) => (
+        <div
+          key={item.id}
+          style={{ display: "flex", gap: "10px", margin: "10px 0" }}
+        >
+          <img src={item.image} alt={item.name} width={50} />
+          <span>{item.name}</span>
+          <span>{item.price}₫</span>
+          <button onClick={() => decreaseQty(item.id)}>-</button>
+          <span>{item.quantity}</span>
+          <button onClick={() => increaseQty(item.id)}>+</button>
+          <span>= {item.price * item.quantity}₫</span>
+          <button onClick={() => removeFromCart(item.id)}>❌</button>
+        </div>
+      ))}
       <h3>Tổng cộng: {total}₫</h3>
-    </section>
+      <button onClick={() => alert("Thanh toán thành công!")}>
+        Thanh toán
+      </button>
+    </div>
   );
 };
 
