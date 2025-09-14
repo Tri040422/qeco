@@ -221,15 +221,66 @@ h1 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+.product-card {
+  border: 1px solid #ddd;        /* viền mỏng */
+  border-radius: 12px;           /* bo góc */
+  padding: 16px;
+  margin: 12px;
+  background: #fff;              /* nền trắng */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* đổ bóng nhẹ */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
 .product-img {
   width: 100%;
-  max-height: 160px;
-  object-fit: contain;
-  background-color: #fff;
+  height: 200px;
+  object-fit: contain;   /* ảnh không méo, nằm gọn trong khung */
   border-radius: 8px;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
 }
+
+.product-card h4 {
+  font-size: 18px;
+  margin: 6px 0;
+  color: #333;
+}
+
+.product-card p {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0 8px;
+}
+
+.product-card strong {
+  font-size: 16px;
+  color: #e53935;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.add-to-cart-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-to-cart-btn:hover {
+  background: #43a047;
+}
+
 
 .product-list {
   display: grid;
