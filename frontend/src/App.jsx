@@ -15,6 +15,13 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminRoute from "./routes/AdminRoute";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
+import AdminOrders from "./pages/admin/AdminOrders"; // nếu bạn thêm file admin
+
+import MyOrders from "./pages/MyOrders";
+import Coupons from "./pages/admin/Coupons"; // nếu dùng
 
 function App() {
   return (
@@ -38,10 +45,43 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/faq" element={<FAQ />} />
             <Route
-              path="/admin"
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <Orders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/order/:id"
+              element={
+                <ProtectedRoute>
+                  <OrderDetail />
+                </ProtectedRoute>
+              }
+            />
+            {/* Admin */}
+            <Route
+              path="/admin/orders"
               element={
                 <AdminRoute>
-                  <AdminDashboard />
+                  <AdminOrders />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/coupons"
+              element={
+                <AdminRoute>
+                  <Coupons />
                 </AdminRoute>
               }
             />

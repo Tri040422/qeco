@@ -36,6 +36,13 @@ const AdminDashboard = () => {
           >
             <Settings size={20} /> Settings
           </Link>
+          <Link to="/admin/orders" className="...">
+            Quản lý đơn hàng
+          </Link>
+          <Link to="/admin/coupons" className="...">
+            Mã giảm giá
+          </Link>{" "}
+          {/* nếu dùng voucher */}
         </nav>
       </aside>
 

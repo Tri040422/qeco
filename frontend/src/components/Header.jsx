@@ -54,7 +54,10 @@ const Header = () => {
 
           {user ? (
             <>
-              <li>Xin chào, {user.username || user.email}</li>
+              <li>
+                <Link to="/orders">Đơn hàng</Link>
+              </li>{" "}
+              {/* ✅ thêm */}
               {user.role === "admin" && (
                 <li>
                   <Link to="/admin">Quản trị</Link>

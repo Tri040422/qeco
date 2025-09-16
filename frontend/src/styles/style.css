@@ -562,6 +562,44 @@ h1 {
   padding: 16px;
 }
 
+/* ==== BUTTONS ==== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #4CAF50;
+  color: #fff;
+}
+.btn-primary:hover { background: #43a047; }
+
+.btn-ghost {
+  background: #f6f6f6;
+  color: #333;
+  border-color: #ddd;
+}
+.btn-ghost:hover { background: #efefef; }
+
+/* Fix form contact button */
+.send-btn {
+  padding: 10px 16px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.send-btn:hover { background: var(--hover-blue); }
+ 
 /* ==== RESPONSIVE ==== */
 @media (max-width: 768px) {
   .detail-section {

@@ -1,38 +1,52 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
+import generateToken from "../utils/generateToken.js";
 
-export const register = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const existing = await User.findOne({ email });
-    if (existing)
-      return res.status(400).json({ message: "Email already exists" });
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public
+export const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
 
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed });
-
-    res.status(201).json({ message: "User registered", user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
   }
-};
 
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+  const user = await User.create({ name, email, password });
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: "Invalid credentials" });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
     });
-
-    res.json({ message: "Login successful", token });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
   }
-};
+});
+
+// @desc    Login user & get token
+// @route   POST /api/auth/login
+// @access  Public
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid email or password");
+  }
+});

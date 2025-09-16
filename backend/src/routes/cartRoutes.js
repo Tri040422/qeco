@@ -1,15 +1,28 @@
 import express from "express";
+import { protect } from "../middleware/authMiddleware.js";
 import {
-  addToCart,
   getCart,
-  removeFromCart,
+  addItemToCart,
+  updateItemQty,
+  removeItemFromCart,
+  clearCart,
 } from "../controllers/cartController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, addToCart);
-router.get("/", authMiddleware, getCart);
-router.delete("/:productId", authMiddleware, removeFromCart);
+// Lấy giỏ hàng của user
+router.get("/", protect, getCart);
+
+// Thêm item vào giỏ: { productId, qty }
+router.post("/", protect, addItemToCart);
+
+// Cập nhật số lượng: /:productId  { qty }
+router.put("/:productId", protect, updateItemQty);
+
+// Xoá 1 item: /:productId
+router.delete("/:productId", protect, removeItemFromCart);
+
+// Xoá toàn bộ giỏ
+router.delete("/", protect, clearCart);
 
 export default router;
