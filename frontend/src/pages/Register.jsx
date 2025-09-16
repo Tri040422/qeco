@@ -1,63 +1,49 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
-  const [username, setUsername] = useState("");
+  const { register } = useAuth();
+  const nav = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     try {
-      // gọi API backend (bạn chỉnh lại URL cho đúng)
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-
-      setMessage(
-        res.data?.message || "Đăng ký thành công! Vui lòng đăng nhập."
-      );
-      setUsername("");
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      setMessage(
-        error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại."
-      );
+      await register(name, email, password);
+      nav("/");
+    } catch (err) {
+      alert(err.response?.data?.message || "Register failed");
     }
   };
 
   return (
     <div className="register-form">
       <h2>Đăng ký</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={submit}>
         <input
-          type="text"
-          placeholder="Tên người dùng"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Tên"
           required
         />
         <input
-          type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
           required
         />
         <input
-          type="password"
-          placeholder="Mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          placeholder="Mật khẩu"
           required
         />
         <button type="submit">Đăng ký</button>
       </form>
-      {message && <p style={{ marginTop: "10px" }}>{message}</p>}
     </div>
   );
 };

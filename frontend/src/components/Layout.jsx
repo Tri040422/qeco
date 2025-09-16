@@ -5,13 +5,13 @@ import Footer from "./Footer";
 
 const Layout = () => {
   return (
-    <>
+    <div className="layout">
       <Header />
-      <main style={{ minHeight: "80vh", padding: "20px" }}>
-        <Outlet /> {/* Tất cả page con hiển thị ở đây */}
+      <main className="main-content">
+        <Outlet />
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

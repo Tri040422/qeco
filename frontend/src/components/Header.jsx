@@ -1,26 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth"; // ✅ import hook
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useCart } from "../hooks/useCart";
+
+// import ảnh từ public (Vite cho phép import đường dẫn tuyệt đối bắt đầu bằng /)
+import logo from "/images/logo-qeco.jpg";
 
 const Header = () => {
-  const { user, logout } = useAuth(); // ✅ lấy user & logout từ context
+  const { user, logout } = useAuth();
+  const { cartItems } = useCart();
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/products?search=${encodeURIComponent(search)}`);
+      setSearch("");
+    }
+  };
 
   return (
     <header className="header sticky">
-      <div className="logo-container">
-        <img
-          src="/images/logo-qeco.jpg"
-          alt="QeCo Logo"
-          className="logo-image"
-        />
+      {/* Logo */}
+      <Link to="/" className="logo-container">
+        <img src={logo} alt="QeCo Logo" className="logo-image" />
         <div className="logo-text-gradient">
           <span className="qc">Q</span>
           <span className="eo">e</span>
           <span className="qc">C</span>
           <span className="eo">o</span>
         </div>
-      </div>
+      </Link>
 
+      {/* Navigation */}
       <nav>
         <ul className="nav-list">
           <li>
@@ -33,15 +46,20 @@ const Header = () => {
             <Link to="/contact">Liên hệ</Link>
           </li>
           <li>
-            <Link to="/cart">Giỏ hàng</Link>
+            <Link to="/faq">FAQ</Link>
           </li>
           <li>
-            <Link to="/faq">FAQ</Link>
+            <Link to="/cart">Giỏ hàng ({cartItems.length})</Link>
           </li>
 
           {user ? (
             <>
-              <li>Xin chào, {user.name || user.email}</li>
+              <li>Xin chào, {user.username || user.email}</li>
+              {user.role === "admin" && (
+                <li>
+                  <Link to="/admin">Quản trị</Link>
+                </li>
+              )}
               <li>
                 <button onClick={logout} className="logout-btn">
                   Đăng xuất
@@ -61,14 +79,16 @@ const Header = () => {
         </ul>
       </nav>
 
-      <div className="search-box">
+      {/* Search box */}
+      <form className="search-box" onSubmit={handleSearch}>
         <input
           type="text"
           placeholder="Bạn cần tìm gì?"
-          onChange={(e) => console.log("search:", e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <button>🔍</button>
-      </div>
+        <button type="submit">🔍</button>
+      </form>
     </header>
   );
 };

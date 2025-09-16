@@ -1,31 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import products from "../data/products"; // import danh sách sản phẩm
 import "../styles/style.css";
-import { useCart } from "../hooks/useCart"; // import hook giỏ hàng
+import { useCart } from "../hooks/useCart";
+import axios from "axios";
+import staticProducts from "../data/products";
+
+const SOURCE = import.meta.env.VITE_PRODUCTS_SOURCE || "api";
+const BASE = import.meta.env.VITE_BACKEND_URL;
+
+const mapImage = (p) => ({
+  ...p,
+  id: p._id || p.id,
+  image: p.image?.startsWith("/uploads") ? `${BASE}${p.image}` : p.image,
+});
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const product = products.find((p) => p.id === Number(id));
-
+  const { id } = useParams(); // có thể là ObjectId (API) hoặc số (static)
+  const [product, setProduct] = useState(null);
   const { addToCart, cartItems } = useCart();
-  const isInCart = product && cartItems.some((item) => item.id === product.id);
 
-  if (!product) {
-    return <p>Sản phẩm không tồn tại.</p>;
-  }
+  useEffect(() => {
+    const pickStatic = () => {
+      const numericId = Number(id);
+      const p = staticProducts.find((x) => x.id === numericId);
+      return p ? mapImage(p) : null;
+    };
 
-  // Hàm format giá tiền
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN", {
+    const loadStatic = () => setProduct(pickStatic());
+
+    const loadApi = async () => {
+      try {
+        const res = await axios.get(`${BASE}/api/products/${id}`);
+        const p = mapImage(res.data);
+        setProduct(p);
+      } catch {
+        // API fail → fallback static (hữu ích khi route dùng số id)
+        setProduct(pickStatic());
+      }
+    };
+
+    if (SOURCE === "static") loadStatic();
+    else loadApi();
+  }, [id]);
+
+  if (!product) return <p>Đang tải sản phẩm...</p>;
+
+  const isInCart = cartItems.some((item) => item.id === product.id);
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price);
-  };
 
   return (
     <section className="detail-section">
-      <img src={product.image} alt={product.name} className="detail-img" />
+      {product.image && (
+        <img src={product.image} alt={product.name} className="detail-img" />
+      )}
       <div className="detail-info">
         <h2>{product.name}</h2>
         <p>{product.desc}</p>
