@@ -1,58 +1,108 @@
+// src/pages/Cart.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
-import { useAuth } from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/style.css";
 
 const Cart = () => {
-  const { cart, removeFromCart } = useCart();
-  const { user } = useAuth();
+  const { cartItems, updateQty, removeFromCart } = useCart();
   const navigate = useNavigate();
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  const handleCheckout = () => {
-    if (!user) {
-      navigate("/login");
-    } else {
-      navigate("/checkout");
-    }
-  };
+  const total = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
+    <div className="page-container">
+      <h1 className="section-title">Giỏ hàng của tôi</h1>
+
+      {cartItems.length === 0 ? (
+        <p>Chưa có sản phẩm nào.</p>
       ) : (
-        <>
-          <ul className="divide-y">
-            {cart.map((item) => (
-              <li
-                key={item.id}
-                className="py-2 flex justify-between items-center"
-              >
-                <span>
-                  {item.name} x {item.qty}
-                </span>
-                <span>${item.price * item.qty}</span>
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="text-red-500"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-4 text-right font-semibold">Total: ${total}</div>
-          <button
-            onClick={handleCheckout}
-            className="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-          >
-            Checkout
-          </button>
-        </>
+        <div className="cart-content">
+          {/* Bảng sản phẩm */}
+          <table className="cart-table">
+            <thead>
+              <tr>
+                <th>SẢN PHẨM</th>
+                <th>GIÁ</th>
+                <th>SỐ LƯỢNG</th>
+                <th>TỔNG</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item) => (
+                <tr key={item._id}>
+                  <td style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="cart-img"
+                    />
+                    {item.name}
+                  </td>
+                  <td>{item.price.toLocaleString()}đ</td>
+                  <td>
+                    <div className="qty-box">
+                      <button onClick={() => updateQty(item, item.qty - 1)}>
+                        -
+                      </button>
+                      <input type="text" readOnly value={item.qty} />
+                      <button onClick={() => updateQty(item, item.qty + 1)}>
+                        +
+                      </button>
+                    </div>
+                  </td>
+                  <td>{(item.price * item.qty).toLocaleString()}đ</td>
+                  <td>
+                    <button onClick={() => removeFromCart(item)}>✕</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Tóm tắt */}
+          <div className="cart-summary">
+            <h3>Tổng tiền</h3>
+            <div className="flex-between">
+              <span>Tổng tạm tính</span>
+              <span>{total.toLocaleString()}đ</span>
+            </div>
+            <div className="flex-between">
+              <span>Phí vận chuyển</span>
+              <span>Miễn phí</span>
+            </div>
+            <div className="flex-between" style={{ fontWeight: "bold" }}>
+              <span>Thành tiền</span>
+              <span>{total.toLocaleString()}đ</span>
+            </div>
+            <button
+              className="checkout-btn"
+              onClick={() => navigate("/checkout")}
+            >
+              Thanh toán
+            </button>
+          </div>
+        </div>
       )}
+
+      {/* Voucher */}
+      <div className="voucher-box">
+        <input type="text" placeholder="Nhập mã" />
+        <button className="checkout-btn" style={{ flex: "0 0 auto" }}>
+          Áp dụng
+        </button>
+      </div>
+
+      {/* Nút điều hướng */}
+      <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+        <Link to="/" className="btn-gray">
+          Trở lại trang chủ
+        </Link>
+        <Link to="/products" className="btn-gray">
+          Thêm sản phẩm
+        </Link>
+      </div>
     </div>
   );
 };

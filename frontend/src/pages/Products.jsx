@@ -1,79 +1,52 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import ProductCard from "../components/ProductCard";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import products from "../data/products";
 import "../styles/style.css";
-import { useCart } from "../hooks/useCart";
-import staticProducts from "../data/products";
-
-const SOURCE = import.meta.env.VITE_PRODUCTS_SOURCE || "api";
-const BASE = import.meta.env.VITE_BACKEND_URL;
-
-const mapImage = (p) => ({
-  ...p,
-  id: p._id || p.id,
-  image: p.image?.startsWith("/uploads") ? `${BASE}${p.image}` : p.image,
-});
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("");
-  const { addToCart } = useCart();
+  const [page, setPage] = useState(1);
+  const perPage = 8;
+  const totalPages = Math.ceil(products.length / perPage);
 
-  useEffect(() => {
-    const loadStatic = () => setProducts(staticProducts.map(mapImage));
-    const loadApi = async () => {
-      try {
-        const res = await axios.get(`${BASE}/api/products`);
-        const list = (res.data || []).map(mapImage);
-        setProducts(list.length ? list : staticProducts.map(mapImage));
-      } catch {
-        setProducts(staticProducts.map(mapImage));
-      }
-    };
-    SOURCE === "static" ? loadStatic() : loadApi();
-  }, []);
+  const currentProducts = products.slice((page - 1) * perPage, page * perPage);
 
-  const filtered = products
-    .filter((i) => i.name?.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) =>
-      sort === "price-asc"
-        ? a.price - b.price
-        : sort === "price-desc"
-        ? b.price - a.price
-        : 0
-    );
+  const fmt = (n) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(n);
 
   return (
-    <section className="products">
-      <h1>SẢN PHẨM</h1>
-      <div className="controls">
-        <input
-          className="search-input"
-          placeholder="Tìm sản phẩm..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="sort-select"
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
+    <div className="products-page">
+      <h2 className="products-title">SẢN PHẨM</h2>
+      <div className="products-grid">
+        {currentProducts.map((p) => (
+          <Link key={p.id} to={`/products/${p.id}`} className="product-card">
+            <img src={p.img} alt={p.name} />
+            <p>{p.name}</p>
+            <span>{fmt(p.price)}</span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            className={`page-btn ${page === i + 1 ? "active" : ""}`}
+            onClick={() => setPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          className="page-btn"
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
         >
-          <option value="">Sắp xếp</option>
-          <option value="price-asc">Giá: Thấp đến Cao</option>
-          <option value="price-desc">Giá: Cao đến Thấp</option>
-        </select>
+          →
+        </button>
       </div>
-      <div className="product-list">
-        {filtered.length === 0 ? (
-          <p>Không có sản phẩm nào.</p>
-        ) : (
-          filtered.map((item) => (
-            <ProductCard key={item.id} data={item} addToCart={addToCart} />
-          ))
-        )}
-      </div>
-    </section>
+    </div>
   );
 };
 

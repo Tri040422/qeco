@@ -1,76 +1,74 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import products from "../data/products";
 import "../styles/style.css";
-import { useCart } from "../hooks/useCart";
-import axios from "axios";
-import staticProducts from "../data/products";
-
-const SOURCE = import.meta.env.VITE_PRODUCTS_SOURCE || "api";
-const BASE = import.meta.env.VITE_BACKEND_URL;
-
-const mapImage = (p) => ({
-  ...p,
-  id: p._id || p.id,
-  image: p.image?.startsWith("/uploads") ? `${BASE}${p.image}` : p.image,
-});
 
 const ProductDetail = () => {
-  const { id } = useParams(); // có thể là ObjectId (API) hoặc số (static)
-  const [product, setProduct] = useState(null);
-  const { addToCart, cartItems } = useCart();
+  const { id } = useParams();
+  const product = products.find((p) => p.id === parseInt(id));
 
-  useEffect(() => {
-    const pickStatic = () => {
-      const numericId = Number(id);
-      const p = staticProducts.find((x) => x.id === numericId);
-      return p ? mapImage(p) : null;
-    };
+  const [qty, setQty] = useState(1);
 
-    const loadStatic = () => setProduct(pickStatic());
+  if (!product) {
+    return (
+      <div className="page-container detail-page">
+        <h2>Sản phẩm không tồn tại</h2>
+      </div>
+    );
+  }
 
-    const loadApi = async () => {
-      try {
-        const res = await axios.get(`${BASE}/api/products/${id}`);
-        const p = mapImage(res.data);
-        setProduct(p);
-      } catch {
-        // API fail → fallback static (hữu ích khi route dùng số id)
-        setProduct(pickStatic());
-      }
-    };
-
-    if (SOURCE === "static") loadStatic();
-    else loadApi();
-  }, [id]);
-
-  if (!product) return <p>Đang tải sản phẩm...</p>;
-
-  const isInCart = cartItems.some((item) => item.id === product.id);
-  const formatPrice = (price) =>
+  const formatPrice = (n) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
-    }).format(price);
+    }).format(n);
 
   return (
-    <section className="detail-section">
-      {product.image && (
-        <img src={product.image} alt={product.name} className="detail-img" />
-      )}
-      <div className="detail-info">
-        <h2>{product.name}</h2>
-        <p>{product.desc}</p>
-        <strong>Giá: {formatPrice(product.price)}</strong>
-        <br />
-        <button
-          onClick={() => !isInCart && addToCart(product)}
-          disabled={isInCart}
-          className={isInCart ? "btn-disabled" : "btn-add"}
-        >
-          {isInCart ? "✔ Đã có trong giỏ" : "🛒 Thêm vào giỏ"}
-        </button>
+    <div className="page-container detail-page">
+      <div className="detail-top">
+        {/* Hình ảnh */}
+        <div className="detail-images">
+          <img src={product.img} alt={product.name} className="detail-img" />
+        </div>
+
+        {/* Thông tin */}
+        <div className="detail-info">
+          <h1>{product.name}</h1>
+          <div className="status">Còn hàng</div>
+          <div className="rating">⭐⭐⭐⭐⭐ (4 đánh giá)</div>
+          <div className="detail-price">{formatPrice(product.price)}</div>
+          <p className="desc">
+            {product.desc ||
+              "Sản phẩm thủ công thân thiện môi trường, chất liệu bền nhẹ, chống nước và dễ lau chùi."}
+          </p>
+
+          <div className="qty-box">
+            <button onClick={() => setQty((q) => Math.max(1, q - 1))}>-</button>
+            <input type="text" value={qty} readOnly />
+            <button onClick={() => setQty((q) => q + 1)}>+</button>
+          </div>
+
+          <button className="add-cart-btn">🛒 Thêm vào giỏ</button>
+        </div>
       </div>
-    </section>
+
+      {/* Related */}
+      <div className="related">
+        <h2 className="section-title">SẢN PHẨM KHÁC</h2>
+        <div className="related-grid">
+          {products
+            .filter((p) => p.id !== product.id)
+            .slice(0, 4)
+            .map((p) => (
+              <div key={p.id} className="product-card">
+                <img src={p.img} alt={p.name} />
+                <p>{p.name}</p>
+                <span>{formatPrice(p.price)}</span>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

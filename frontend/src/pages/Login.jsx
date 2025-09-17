@@ -1,46 +1,73 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/style.css";
 
 const Login = () => {
-  const { login } = useAuth();
-  const nav = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    remember: false,
+  });
+  const navigate = useNavigate();
 
-  const handle = async (e) => {
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await login(email, password);
-      setMsg("Đăng nhập thành công");
-      nav("/"); // redirect home
-    } catch (err) {
-      setMsg(err.response?.data?.message || "Đăng nhập thất bại");
-    }
+    // TODO: gọi API login
+    console.log("Đăng nhập:", form);
+    navigate("/");
   };
 
   return (
-    <div className="login-form">
-      <h2>Đăng nhập</h2>
-      <form onSubmit={handle}>
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Mật khẩu"
-          required
-        />
-        <button type="submit">Đăng nhập</button>
-      </form>
-      <p>{msg}</p>
+    <div className="auth-page">
+      <div className="auth-box">
+        <h2>Đăng nhập</h2>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Mật khẩu"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+          <div className="auth-options">
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                name="remember"
+                checked={form.remember}
+                onChange={handleChange}
+              />
+              Ghi nhớ tôi
+            </label>
+            <Link to="/forgot" className="forgot-link">
+              Quên mật khẩu
+            </Link>
+          </div>
+          <button type="submit" className="auth-btn">
+            Đăng nhập
+          </button>
+        </form>
+        <div className="auth-footer">
+          Không có tài khoản? <Link to="/register">Đăng Ký</Link>
+        </div>
+      </div>
     </div>
   );
 };
+
 export default Login;

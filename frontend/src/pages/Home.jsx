@@ -1,163 +1,188 @@
-import React, { useState, useEffect } from "react";
-import CategoryBlock from "../components/CategoryBlock";
-import ProductCard from "../components/ProductCard";
+import React, { useState } from "react";
 import "../styles/style.css";
-import { useCart } from "../hooks/useCart";
-import logo from "/images/logo-qeco.jpg";
-import productsData from "../data/products"; // ✅ lấy danh sách từ data
-
-// ✅ alias cho dễ đọc
-const productList = Array.isArray(productsData) ? productsData : [];
-
-// ✅ FAQ local
-const faqList = [
-  { q: "Ecolite là gì?", a: "Ecolite là dòng sản phẩm thân thiện môi trường." },
-  {
-    q: "Làm sao để liên lạc với QeCo?",
-    a: "Bạn có thể liên hệ qua email hoặc hotline.",
-  },
-  { q: "Phí vận chuyển là bao nhiêu?", a: "Tùy khu vực, thường từ 20k VNĐ." },
-  {
-    q: "Cách đổi trả hàng khi sản phẩm lỗi hoặc không vừa ý?",
-    a: "Trong vòng 7 ngày, miễn phí đổi trả.",
-  },
-  {
-    q: "QeCo có nhận custom sản phẩm không?",
-    a: "Có, vui lòng gửi yêu cầu chi tiết.",
-  },
-];
 
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [feedbacks, setFeedbacks] = useState([]);
   const [openFaq, setOpenFaq] = useState(null);
-  const { addToCart } = useCart();
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setFeedbacks([
-        { id: 1, text: "Sản phẩm đẹp và thân thiện!" },
-        { id: 2, text: "Dịch vụ rất tốt!" },
-        { id: 3, text: "Ship nhanh, đóng gói cẩn thận!" },
-      ]);
-    }, 300);
-    return () => clearTimeout(t);
-  }, []);
+  const categories = [
+    { name: "Ly, hủ nến", img: "/images/ly-hu-nen.jpg" },
+    { name: "Lót ly", img: "/images/lot-ly.jpg" },
+    { name: "Lọ hoa", img: "/images/lo-hoa.jpg" },
+  ];
 
-  const filteredProducts = productList.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedCategory ? item.category === selectedCategory : true)
-  );
+  const bestSeller = [
+    {
+      name: "Lót tròn họa tiết terrazzo",
+      price: "70.000đ",
+      img: "/images/lot-tron-1.jpg",
+    },
+    {
+      name: "Lót Oval họa tiết terrazzo",
+      price: "190.000đ",
+      img: "/images/lot-oval.jpg",
+    },
+    {
+      name: "Hủ nến màu trơn",
+      price: "160.000đ",
+      img: "/images/hu-nen-mau-tron.jpg",
+    },
+  ];
 
-  // Nếu data không có isFeatured, chọn đại một vài item đầu làm “nổi bật”
-  const featuredProducts = productList.slice(0, 3);
+  const products = [
+    { name: "Khay oval in chìm", img: "/images/oval-in-chim-1.jpg" },
+    { name: "Khay vỏ sò", img: "/images/vo-so-1.jpg" },
+    { name: "Hủ đựng nắp có chóp", img: "/images/hu-dung-nap-co-chop-1.jpg" },
+    { name: "Lót hình bông hoa", img: "/images/lot-hinh-bong-hoa-1.jpg" },
+  ];
+
+  const feedbacks = [
+    {
+      user: "NGAN TUYET",
+      text: "Sản phẩm rất dễ thương, còn có nhiều ý nghĩa, mình rất thích nó lần tới mình sẽ ủng hộ tiếp.",
+      stars: 5,
+    },
+    {
+      user: "NGOC THANH",
+      text: "Xịn đét làm đúng theo yêu cầu khách hàng, còn phối màu đẹp nữa, lần sau chắc phải mua thêm tặng người thân mới được.",
+      stars: 5,
+    },
+  ];
+
+  const faqs = [
+    {
+      q: "QeCo là gì?",
+      a: "QeCo là thương hiệu sản phẩm decor thân thiện môi trường.",
+    },
+    {
+      q: "Làm sao để liên lạc với QeCo?",
+      a: "Bạn có thể đặt trực tiếp trên website hoặc liên hệ chúng tôi.",
+    },
+    {
+      q: "Phí vận chuyển là bao nhiêu?",
+      a: "Phí vận chuyển tuỳ khu vực, thường từ 20k VNĐ.",
+    },
+    {
+      q: "Cách đổi trả sản phẩm lỗi khi hoặc không vừa ý?",
+      a: "Trong vòng 7 ngày kể từ khi nhận hàng.",
+    },
+    {
+      q: "QeCo có nhận custom sản phẩm không?",
+      a: "Có.",
+    },
+  ];
 
   return (
-    <>
+    <div className="home-container">
       {/* Hero */}
-      <section className="welcome" style={{ background: "#f0f0f0" }}>
-        <h1>Chào mừng bạn đến với QeCo</h1>
-        <p>Sản phẩm trang trí thân thiện môi trường</p>
-        <img
-          src={logo}
-          alt="QeCo"
-          style={{ width: 120, borderRadius: 12, marginTop: 12 }}
-        />
+      <section className="hero">
+        <img src="/images/banner.jpg" alt="Hero" className="hero-img" />
+        <div className="hero-text">
+          <h1>
+            Chào mừng bạn đến với <span className="brand">QeCo</span>
+          </h1>
+        </div>
       </section>
 
-      {/* Search */}
-      <section
-        className="search"
-        style={{ margin: "1.5rem auto", textAlign: "center" }}
-      >
-        <input
-          type="text"
-          placeholder="Tìm sản phẩm..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            padding: "0.5rem 1rem",
-            width: "60%",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-          }}
-        />
-      </section>
-
-      {/* Category */}
+      {/* Categories */}
       <section className="categories">
-        <h2>PHÂN LOẠI</h2>
+        <h2 className="section-title">Phân loại</h2>
         <div className="category-list">
-          {["Lót ly", "Hũ nến", "Lọ hoa"].map((cat) => (
-            <CategoryBlock
-              key={cat}
-              title={cat}
-              onClick={() =>
-                setSelectedCategory((c) => (c === cat ? null : cat))
-              }
-              active={cat === selectedCategory}
-            />
+          {categories.map((c, i) => (
+            <div key={i} className="category-card">
+              <img src={c.img} alt={c.name} />
+              <p>{c.name}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Featured */}
-      <section className="featured">
-        <h2>Sản phẩm nổi bật</h2>
-        <div className="product-list">
-          {featuredProducts.map((item) => (
-            <ProductCard
-              key={item.id || item._id}
-              data={item}
-              addToCart={addToCart}
-            />
+      {/* Promo */}
+      <section className="promo">
+        <div className="promo-card">
+          <h3>Sản phẩm mới giảm giá sâu</h3>
+          <button className="btn-primary">Mua ngay</button>
+        </div>
+      </section>
+
+      {/* Best Seller */}
+      <section className="best-seller">
+        <h2 className="section-title">Sản phẩm bán chạy</h2>
+        <div className="best-grid">
+          {bestSeller.map((p, i) => (
+            <div key={i} className="best-card">
+              <img src={p.img} alt={p.name} />
+              <p>{p.name}</p>
+              <span>{p.price}</span>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Product List */}
+      {/* About */}
+      <section className="about">
+        <h2 className="section-title">Về chúng tôi</h2>
+        <div className="about-content">
+          <div>
+            <p>
+              QeCo là một cửa hàng decor thủ công sáng tạo, kết hợp vật liệu
+              sinh học Ecolite với đồ tái chế như vụn nhựa, thuỷ tinh, sỏi, hoa
+              khô ... để tạo ra các sản phẩm nghệ thuật mang tính cá nhân hoá
+              cao và truyền tải thông điệp sống xanh. Mỗi sản phẩm đi kèm mã QR
+              để kể lại hành trình tái sinh của nguyên liệu và quá trình chế
+              tác, tạo ra trải nghiệm nghệ thuật và công nghệ độc đáo.
+            </p>
+            <button className="btn-secondary">Xem thêm</button>
+          </div>
+          <img
+            src="/images/ve-chung-toi.jpg"
+            alt="About"
+            className="about-img"
+          />
+        </div>
+      </section>
+
+      {/* Products */}
       <section className="products">
-        <h2>SẢN PHẨM {selectedCategory ? `- ${selectedCategory}` : ""}</h2>
+        <h2 className="section-title">Sản phẩm</h2>
         <div className="product-list">
-          {filteredProducts.map((item) => (
-            <ProductCard
-              key={item.id || item._id}
-              data={item}
-              addToCart={addToCart}
-            />
+          {products.map((p, i) => (
+            <div key={i} className="product-card">
+              <img src={p.img} alt={p.name} />
+              <p>{p.name}</p>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Feedback */}
       <section className="feedbacks">
-        <h2>FEEDBACKS</h2>
-        {feedbacks.length === 0 ? (
-          <p>Đang tải feedback...</p>
-        ) : (
-          feedbacks.map((fb) => <p key={fb.id}>"{fb.text}"</p>)
-        )}
+        <h2 className="section-title">Feedback</h2>
+        <div className="feedback-list">
+          {feedbacks.map((f, i) => (
+            <div key={i} className="feedback-card">
+              <p>"{f.text}"</p>
+              <span>⭐ {f.stars} / 5</span>
+              <strong>- {f.user}</strong>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* FAQ */}
       <section className="faq">
-        <h2>CÂU HỎI THƯỜNG GẶP</h2>
-        {faqList.map((faq, i) => (
+        <h2 className="section-title">Câu hỏi thường gặp</h2>
+        {faqs.map((f, i) => (
           <div
             key={i}
             className="faq-item"
             onClick={() => setOpenFaq(openFaq === i ? null : i)}
           >
-            <div className="faq-question" style={{ fontWeight: 600 }}>
-              {faq.q}
-            </div>
-            {openFaq === i && <p style={{ marginTop: 8 }}>{faq.a}</p>}
+            <div className="faq-question">{f.q}</div>
+            {openFaq === i && <div className="faq-answer">{f.a}</div>}
           </div>
         ))}
       </section>
-    </>
+    </div>
   );
 };
 

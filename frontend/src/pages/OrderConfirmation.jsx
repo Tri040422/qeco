@@ -1,32 +1,17 @@
+// src/pages/OrderConfirmation.jsx
 import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import "../styles/style.css";
 
-function OrderConfirmation() {
-  const location = useLocation();
-  const { orderId, form } = location.state || {};
-
+const OrderConfirmation = () => {
   return (
-    <div className="order-confirmation">
-      <h2>Thank you for your order!</h2>
-      {orderId ? (
-        <>
-          <p>
-            Your order ID: <strong>{orderId}</strong>
-          </p>
-          <p>
-            We’ll send a confirmation email to <strong>{form?.email}</strong>
-          </p>
-          <p>Shipping to: {form?.address}</p>
-        </>
-      ) : (
-        <p>No order found.</p>
-      )}
-
-      <Link to="/products" className="btn-back">
-        Continue Shopping
+    <div className="order-success">
+      <h1 className="success-text">Đặt hàng thành công</h1>
+      <Link to="/" className="back-home">
+        ← Về trang chủ
       </Link>
     </div>
   );
-}
+};
 
 export default OrderConfirmation;
