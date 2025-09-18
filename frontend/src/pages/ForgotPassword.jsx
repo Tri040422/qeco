@@ -10,25 +10,30 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       await forgotPassword(email);
-      setMsg("Vui lòng kiểm tra email để reset mật khẩu");
+      setMsg("✅ Vui lòng kiểm tra email để đặt lại mật khẩu");
     } catch (err) {
-      setMsg(err.response?.data?.message || "Error");
+      setMsg(err.response?.data?.message || "❌ Lỗi gửi email");
     }
   };
 
   return (
-    <div className="forgot-form">
-      <h2>Quên mật khẩu</h2>
-      <form onSubmit={submit}>
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <button type="submit">Gửi</button>
-      </form>
-      <p>{msg}</p>
+    <div className="auth-page">
+      <div className="auth-box">
+        <h2>Quên mật khẩu</h2>
+        <form className="auth-form" onSubmit={submit}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+          />
+          <button type="submit" className="auth-btn">
+            Gửi link đặt lại
+          </button>
+        </form>
+        {msg && <p style={{ marginTop: "1rem" }}>{msg}</p>}
+      </div>
     </div>
   );
 };

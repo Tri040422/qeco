@@ -1,23 +1,28 @@
 // src/pages/Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "../styles/style.css";
 
 const Register = () => {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     confirm: "",
+    role: "customer", // mặc định
     agree: false,
   });
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirm) {
       alert("Mật khẩu nhập lại không khớp!");
@@ -27,9 +32,13 @@ const Register = () => {
       alert("Bạn cần đồng ý với điều khoản!");
       return;
     }
-    // TODO: gọi API đăng ký
-    console.log("Đăng ký:", form);
-    navigate("/login");
+
+    const res = await register(form.name, form.email, form.password, form.role);
+    if (res.success) {
+      navigate("/");
+    } else {
+      alert(res.message);
+    }
   };
 
   return (
@@ -37,6 +46,14 @@ const Register = () => {
       <div className="auth-box">
         <h2>Đăng Ký</h2>
         <form className="auth-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Tên hiển thị"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
           <input
             type="email"
             name="email"
@@ -61,6 +78,31 @@ const Register = () => {
             onChange={handleChange}
             required
           />
+
+          {/* Chọn vai trò */}
+          <div className="role-select">
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="customer"
+                checked={form.role === "customer"}
+                onChange={handleChange}
+              />
+              Khách hàng
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                checked={form.role === "admin"}
+                onChange={handleChange}
+              />
+              Chủ shop
+            </label>
+          </div>
+
           <label className="checkbox">
             <input
               type="checkbox"
@@ -68,10 +110,11 @@ const Register = () => {
               checked={form.agree}
               onChange={handleChange}
             />
-            Đồng ý với các điều khoản của chúng tôi
+            Đồng ý với các điều khoản
           </label>
+
           <button type="submit" className="auth-btn">
-            Create Account
+            Tạo tài khoản
           </button>
         </form>
         <div className="auth-footer">

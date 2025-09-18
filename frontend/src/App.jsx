@@ -18,10 +18,18 @@ import AdminRoute from "./routes/AdminRoute";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import OrderDetail from "./pages/OrderDetail";
-import AdminOrders from "./pages/admin/AdminOrders"; // nếu bạn thêm file admin
-
+import AdminOrders from "./pages/admin/AdminOrders";
 import MyOrders from "./pages/MyOrders";
-import Coupons from "./pages/admin/Coupons"; // nếu dùng
+import Coupons from "./pages/admin/Coupons";
+
+// 👉 các trang mới để tránh trang trắng
+import About from "./pages/About";
+import Custom from "./pages/Custom";
+import Returns from "./pages/Returns";
+import Blog from "./pages/Blog";
+
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -33,6 +41,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/contact" element={<Contact />} />
+
             <Route
               path="/cart"
               element={
@@ -44,6 +53,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/faq" element={<FAQ />} />
+
             <Route
               path="/checkout"
               element={
@@ -68,6 +78,13 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Thêm 4 route mới */}
+            <Route path="/about" element={<About />} />
+            <Route path="/custom" element={<Custom />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/blog" element={<Blog />} />
+
             {/* Admin */}
             <Route
               path="/admin/orders"
@@ -86,6 +103,8 @@ function App() {
               }
             />
           </Route>
+          <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/reset/:token" element={<ResetPassword />} />
         </Routes>
       </Router>
     </AuthProvider>

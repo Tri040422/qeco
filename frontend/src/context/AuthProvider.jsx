@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 
-// Lưu ý: file này chỉ export COMPONENT để Fast Refresh mượt
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user từ localStorage khi reload trang
   useEffect(() => {
     const raw = localStorage.getItem("user");
     if (raw) setUser(JSON.parse(raw));
     setLoading(false);
   }, []);
 
-  // Đăng nhập (gọi backend deploy)
   const login = async (email, password) => {
     try {
       const res = await axios.post(
@@ -32,12 +29,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Đăng ký
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, role = "customer") => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        { name, email, password }
+        { name, email, password, role }
       );
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
@@ -50,14 +46,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Đăng xuất
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
+  // ✅ Xóa tài khoản
+  const deleteAccount = async () => {
+    if (!user?.token) return;
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      logout(); // clear state + localStorage
+    } catch (err) {
+      console.error("Xóa tài khoản thất bại:", err);
+      throw err;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, deleteAccount }}
+    >
       {children}
     </AuthContext.Provider>
   );

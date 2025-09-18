@@ -13,16 +13,20 @@ const Footer = () => {
           <span style={{ color: "#fdd600" }}>C</span>
           <span style={{ color: "#00a8cc" }}>o</span>
         </div>
-        <p>Sản phẩm thân thiện với môi trường</p>
+        <p>
+          Quét để kết nối
+          <br />
+          Sống càng thêm xanh
+        </p>
         <div className="footer-social">
           <a href="https://facebook.com" target="_blank" rel="noreferrer">
-            🌐
+            Fb
           </a>
           <a href="https://instagram.com" target="_blank" rel="noreferrer">
-            📸
+            Ig
           </a>
           <a href="https://twitter.com" target="_blank" rel="noreferrer">
-            🐦
+            Tw
           </a>
         </div>
       </div>
@@ -36,10 +40,10 @@ const Footer = () => {
               <Link to="/about">Về QeCo</Link>
             </li>
             <li>
-              <Link to="/custom">Custom</Link>
+              <Link to="/custom">Custom theo yêu cầu</Link>
             </li>
             <li>
-              <Link to="/faq">FAQ</Link>
+              <Link to="/faq">Câu hỏi thường gặp</Link>
             </li>
           </ul>
         </div>

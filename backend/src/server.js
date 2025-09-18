@@ -17,6 +17,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import seoRoutes from "./routes/seoRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
+import userRoutes from "./routes/userRoutes.js";
+
 dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
@@ -87,6 +89,8 @@ app.use((req, res, next) => {
 
 // Error handler
 app.use(errorHandler);
+
+app.use("/api/users", userRoutes);
 
 // Start
 const PORT = process.env.PORT || 5000;

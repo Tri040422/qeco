@@ -1,39 +1,41 @@
 import React, { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const ResetPassword = () => {
-  const [params] = useSearchParams();
-  const email = params.get("email");
-  const token = params.get("token");
+  const { token } = useParams();
   const { resetPassword } = useAuth();
-  const [pass, setPass] = useState("");
+  const [password, setPassword] = useState("");
   const nav = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
-      await resetPassword(email, token, pass);
-      alert("Reset thành công");
+      await resetPassword(token, password);
+      alert("✅ Đặt lại mật khẩu thành công");
       nav("/login");
     } catch (err) {
-      alert(err.response?.data?.message || "Error");
+      alert(err.response?.data?.message || "❌ Lỗi đặt lại mật khẩu");
     }
   };
 
   return (
-    <div className="reset-form">
-      <h2>Đặt mật khẩu mới</h2>
-      <form onSubmit={submit}>
-        <input
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-          type="password"
-          placeholder="Mật khẩu mới"
-          required
-        />
-        <button type="submit">Đổi mật khẩu</button>
-      </form>
+    <div className="auth-page">
+      <div className="auth-box">
+        <h2>Đặt mật khẩu mới</h2>
+        <form className="auth-form" onSubmit={submit}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mật khẩu mới"
+            required
+          />
+          <button type="submit" className="auth-btn">
+            Đổi mật khẩu
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

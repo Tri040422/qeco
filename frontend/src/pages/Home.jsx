@@ -1,39 +1,18 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import products from "../data/products";
 import "../styles/style.css";
 
 const Home = () => {
   const [openFaq, setOpenFaq] = useState(null);
 
   const categories = [
-    { name: "Ly, hủ nến", img: "/images/ly-hu-nen.jpg" },
-    { name: "Lót ly", img: "/images/lot-ly.jpg" },
-    { name: "Lọ hoa", img: "/images/lo-hoa.jpg" },
+    { id: 1, name: "Ly, hủ nến", img: "/images/ly-hu-nen.jpg" },
+    { id: 2, name: "Lót ly", img: "/images/lot-ly.jpg" },
+    { id: 3, name: "Lọ hoa", img: "/images/lo-hoa.jpg" },
   ];
 
-  const bestSeller = [
-    {
-      name: "Lót tròn họa tiết terrazzo",
-      price: "70.000đ",
-      img: "/images/lot-tron-1.jpg",
-    },
-    {
-      name: "Lót Oval họa tiết terrazzo",
-      price: "190.000đ",
-      img: "/images/lot-oval.jpg",
-    },
-    {
-      name: "Hủ nến màu trơn",
-      price: "160.000đ",
-      img: "/images/hu-nen-mau-tron.jpg",
-    },
-  ];
-
-  const products = [
-    { name: "Khay oval in chìm", img: "/images/oval-in-chim-1.jpg" },
-    { name: "Khay vỏ sò", img: "/images/vo-so-1.jpg" },
-    { name: "Hủ đựng nắp có chóp", img: "/images/hu-dung-nap-co-chop-1.jpg" },
-    { name: "Lót hình bông hoa", img: "/images/lot-hinh-bong-hoa-1.jpg" },
-  ];
+  const bestSeller = products.slice(0, 3);
 
   const feedbacks = [
     {
@@ -65,10 +44,7 @@ const Home = () => {
       q: "Cách đổi trả sản phẩm lỗi khi hoặc không vừa ý?",
       a: "Trong vòng 7 ngày kể từ khi nhận hàng.",
     },
-    {
-      q: "QeCo có nhận custom sản phẩm không?",
-      a: "Có.",
-    },
+    { q: "QeCo có nhận custom sản phẩm không?", a: "Có." },
   ];
 
   return (
@@ -84,14 +60,14 @@ const Home = () => {
       </section>
 
       {/* Categories */}
-      <section className="categories">
-        <h2 className="section-title">Phân loại</h2>
+      <section id="categories" className="categories">
+        <button className="btn-primary">Phân loại</button>
         <div className="category-list">
-          {categories.map((c, i) => (
-            <div key={i} className="category-card">
+          {categories.map((c) => (
+            <Link key={c.id} to="/products" className="category-card">
               <img src={c.img} alt={c.name} />
               <p>{c.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -100,7 +76,9 @@ const Home = () => {
       <section className="promo">
         <div className="promo-card">
           <h3>Sản phẩm mới giảm giá sâu</h3>
-          <button className="btn-primary">Mua ngay</button>
+          <Link to="/products" className="btn-primary">
+            Mua ngay
+          </Link>
         </div>
       </section>
 
@@ -108,12 +86,12 @@ const Home = () => {
       <section className="best-seller">
         <h2 className="section-title">Sản phẩm bán chạy</h2>
         <div className="best-grid">
-          {bestSeller.map((p, i) => (
-            <div key={i} className="best-card">
+          {bestSeller.map((p) => (
+            <Link key={p.id} to={`/products/${p.id}`} className="best-card">
               <img src={p.img} alt={p.name} />
               <p>{p.name}</p>
-              <span>{p.price}</span>
-            </div>
+              <span>{p.price.toLocaleString()}đ</span>
+            </Link>
           ))}
         </div>
       </section>
@@ -126,31 +104,18 @@ const Home = () => {
             <p>
               QeCo là một cửa hàng decor thủ công sáng tạo, kết hợp vật liệu
               sinh học Ecolite với đồ tái chế như vụn nhựa, thuỷ tinh, sỏi, hoa
-              khô ... để tạo ra các sản phẩm nghệ thuật mang tính cá nhân hoá
-              cao và truyền tải thông điệp sống xanh. Mỗi sản phẩm đi kèm mã QR
-              để kể lại hành trình tái sinh của nguyên liệu và quá trình chế
-              tác, tạo ra trải nghiệm nghệ thuật và công nghệ độc đáo.
+              khô … để tạo ra các sản phẩm nghệ thuật mang tính cá nhân hoá cao
+              và truyền tải thông điệp sống xanh.
             </p>
-            <button className="btn-secondary">Xem thêm</button>
+            <Link to="/about" className="btn-secondary">
+              Xem thêm
+            </Link>
           </div>
           <img
             src="/images/ve-chung-toi.jpg"
             alt="About"
             className="about-img"
           />
-        </div>
-      </section>
-
-      {/* Products */}
-      <section className="products">
-        <h2 className="section-title">Sản phẩm</h2>
-        <div className="product-list">
-          {products.map((p, i) => (
-            <div key={i} className="product-card">
-              <img src={p.img} alt={p.name} />
-              <p>{p.name}</p>
-            </div>
-          ))}
         </div>
       </section>
 

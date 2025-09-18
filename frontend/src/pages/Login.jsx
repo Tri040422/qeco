@@ -1,26 +1,36 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "../styles/style.css";
 
 const Login = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
     remember: false,
   });
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: gọi API login
-    console.log("Đăng nhập:", form);
-    navigate("/");
+    const res = await login(form.email, form.password);
+    if (res.success) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user.role === "admin") {
+        navigate("/admin/orders");
+      } else {
+        navigate("/");
+      }
+    } else {
+      alert(res.message);
+    }
   };
 
   return (
@@ -63,7 +73,7 @@ const Login = () => {
           </button>
         </form>
         <div className="auth-footer">
-          Không có tài khoản? <Link to="/register">Đăng Ký</Link>
+          Không có tài khoản? <Link to="/register">Đăng ký</Link>
         </div>
       </div>
     </div>
