@@ -102,10 +102,14 @@ const Home = () => {
         <div className="about-content">
           <div>
             <p>
-              QeCo là một cửa hàng decor thủ công sáng tạo, kết hợp vật liệu
-              sinh học Ecolite với đồ tái chế như vụn nhựa, thuỷ tinh, sỏi, hoa
-              khô … để tạo ra các sản phẩm nghệ thuật mang tính cá nhân hoá cao
-              và truyền tải thông điệp sống xanh.
+              <span style={{ color: "#fdd600" }}>Q</span>
+              <span style={{ color: "#00a8cc" }}>e</span>
+              <span style={{ color: "#fdd600" }}>C</span>
+              <span style={{ color: "#00a8cc" }}>o</span> là một cửa hàng decor
+              thủ công sáng tạo, kết hợp vật liệu sinh học Ecolite với đồ tái
+              chế như vụn nhựa, thuỷ tinh, sỏi, hoa khô … để tạo ra các sản phẩm
+              nghệ thuật mang tính cá nhân hoá cao và truyền tải thông điệp sống
+              xanh.
             </p>
             <Link to="/about" className="btn-secondary">
               Xem thêm
