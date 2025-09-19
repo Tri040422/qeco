@@ -1,43 +1,64 @@
-// src/pages/Checkout.jsx
 import React, { useState } from "react";
 import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
-import "../styles/style.css";
+import api from "../api/axios";
 
 const Checkout = () => {
-  const { cartItems, clearCart } = useCart();
+  const { cartItems, discount, clearCart } = useCart();
   const navigate = useNavigate();
-  const total = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-
   const [form, setForm] = useState({
     name: "",
     address: "",
     email: "",
     phone: "",
     note: "",
+    paymentMethod: "cod",
   });
+
+  const itemsPrice = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
+  const totalPrice = Math.max(0, itemsPrice - discount);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    clearCart();
-    navigate("/order-confirmation");
+    try {
+      const res = await api.post("/orders", {
+        shippingAddress: {
+          name: form.name,
+          address: form.address,
+          phone: form.phone,
+          email: form.email,
+          note: form.note,
+        },
+        paymentMethod: form.paymentMethod,
+        items: cartItems.map((i) => ({
+          product: i._id,
+          qty: i.qty,
+        })),
+        discount,
+        totalPrice,
+      });
+      clearCart();
+      navigate(`/order/${res.data.orderId}`);
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Lỗi đặt hàng");
+    }
   };
 
   return (
     <div className="page-container">
       <h1 className="section-title">Thanh toán</h1>
       <div className="checkout-content">
-        {/* Form */}
         <form className="checkout-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
             placeholder="Họ và tên"
             required
+            value={form.name}
             onChange={handleChange}
           />
           <input
@@ -45,6 +66,7 @@ const Checkout = () => {
             name="address"
             placeholder="Địa chỉ"
             required
+            value={form.address}
             onChange={handleChange}
           />
           <div style={{ display: "flex", gap: "1rem" }}>
@@ -53,6 +75,7 @@ const Checkout = () => {
               name="email"
               placeholder="Email"
               required
+              value={form.email}
               onChange={handleChange}
             />
             <input
@@ -60,33 +83,63 @@ const Checkout = () => {
               name="phone"
               placeholder="Số điện thoại"
               required
+              value={form.phone}
               onChange={handleChange}
             />
           </div>
-          <label>
-            <input type="checkbox" /> Vận chuyển tới địa chỉ khác
-          </label>
           <textarea
             name="note"
             placeholder="Ghi chú (không bắt buộc)"
+            value={form.note}
             onChange={handleChange}
-          ></textarea>
+          />
+
+          <h3>Phương thức thanh toán</h3>
+          <label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cod"
+              checked={form.paymentMethod === "cod"}
+              onChange={handleChange}
+            />
+            Thanh toán khi nhận hàng
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="vnpay"
+              checked={form.paymentMethod === "vnpay"}
+              onChange={handleChange}
+            />
+            VNPay
+          </label>
+          <br />
+          <label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="momo"
+              checked={form.paymentMethod === "momo"}
+              onChange={handleChange}
+            />
+            Momo
+          </label>
+
           <button type="submit" className="checkout-btn">
-            Thanh toán
+            Đặt hàng
           </button>
         </form>
 
-        {/* Tóm tắt */}
         <div className="checkout-summary">
-          <h3>Sản phẩm</h3>
+          <h3>Tóm tắt đơn hàng</h3>
           {cartItems.map((item) => (
             <div
               key={item._id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "0.5rem",
-              }}
+              className="flex-between"
+              style={{ marginBottom: "0.5rem" }}
             >
               <span>
                 {item.name} × {item.qty}
@@ -96,31 +149,16 @@ const Checkout = () => {
           ))}
           <hr />
           <div className="flex-between">
-            <span>Thành tiền</span>
-            <span>{total.toLocaleString()}đ</span>
+            <span>Tạm tính</span>
+            <span>{itemsPrice.toLocaleString()}đ</span>
           </div>
           <div className="flex-between">
-            <span>Phí vận chuyển</span>
-            <span>Miễn phí</span>
+            <span>Giảm giá</span>
+            <span>-{discount.toLocaleString()}đ</span>
           </div>
           <div className="flex-between" style={{ fontWeight: "bold" }}>
             <span>Tổng</span>
-            <span>{total.toLocaleString()}đ</span>
-          </div>
-
-          <div style={{ marginTop: "1rem" }}>
-            <label>
-              <input type="radio" name="pay" defaultChecked /> Thanh toán khi
-              nhận hàng
-            </label>
-            <br />
-            <label>
-              <input type="radio" name="pay" /> Thẻ tín dụng
-            </label>
-            <br />
-            <label>
-              <input type="radio" name="pay" /> Thẻ nội địa Napas
-            </label>
+            <span>{totalPrice.toLocaleString()}đ</span>
           </div>
         </div>
       </div>

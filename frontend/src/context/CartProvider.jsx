@@ -3,46 +3,51 @@ import { CartContext } from "./CartContext";
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [discount, setDiscount] = useState(0);
+  const [coupon, setCoupon] = useState(null);
 
   const addToCart = (product) => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((i) => i._id === product._id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: (item.quantity || 1) + 1 }
-            : item
+        return prev.map((i) =>
+          i._id === product._id ? { ...i, qty: i.qty + 1 } : i
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...product, qty: 1 }];
     });
   };
 
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (item) => {
+    setCartItems((prev) => prev.filter((i) => i._id !== item._id));
   };
 
-  const increaseQty = (id) => {
+  const updateQty = (item, qty) => {
+    if (qty <= 0) return removeFromCart(item);
     setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+      prev.map((i) => (i._id === item._id ? { ...i, qty } : i))
     );
   };
 
-  const decreaseQty = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
-          : item
-      )
-    );
+  const clearCart = () => {
+    setCartItems([]);
+    setDiscount(0);
+    setCoupon(null);
   };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, increaseQty, decreaseQty }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQty,
+        clearCart,
+        discount,
+        setDiscount,
+        coupon,
+        setCoupon,
+      }}
     >
       {children}
     </CartContext.Provider>

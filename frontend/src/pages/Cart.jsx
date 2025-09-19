@@ -1,14 +1,41 @@
-// src/pages/Cart.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useCart } from "../hooks/useCart";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios"; // chuẩn hóa baseURL
 import "../styles/style.css";
 
 const Cart = () => {
-  const { cartItems, updateQty, removeFromCart } = useCart();
+  const {
+    cartItems,
+    updateQty,
+    removeFromCart,
+    discount,
+    setDiscount,
+    coupon,
+    setCoupon,
+  } = useCart();
+  const [code, setCode] = useState("");
+  const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
-  const total = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const subtotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
+  const total = subtotal - discount;
+
+  const applyCoupon = async () => {
+    try {
+      const res = await api.post("/coupons/apply", {
+        code,
+        itemsPrice: subtotal,
+      });
+      setDiscount(res.data.discount);
+      setCoupon(res.data.code);
+      setMsg(`Áp dụng mã ${res.data.code} thành công!`);
+    } catch (err) {
+      setDiscount(0);
+      setCoupon(null);
+      setMsg(err.response?.data?.message || "Không áp dụng được mã");
+    }
+  };
 
   return (
     <div className="page-container">
@@ -65,9 +92,15 @@ const Cart = () => {
           <div className="cart-summary">
             <h3>Tổng tiền</h3>
             <div className="flex-between">
-              <span>Tổng tạm tính</span>
-              <span>{total.toLocaleString()}đ</span>
+              <span>Tạm tính</span>
+              <span>{subtotal.toLocaleString()}đ</span>
             </div>
+            {discount > 0 && (
+              <div className="flex-between" style={{ color: "green" }}>
+                <span>Giảm giá ({coupon})</span>
+                <span>-{discount.toLocaleString()}đ</span>
+              </div>
+            )}
             <div className="flex-between">
               <span>Phí vận chuyển</span>
               <span>Miễn phí</span>
@@ -88,11 +121,21 @@ const Cart = () => {
 
       {/* Voucher */}
       <div className="voucher-box">
-        <input type="text" placeholder="Nhập mã" />
-        <button className="checkout-btn" style={{ flex: "0 0 auto" }}>
+        <input
+          type="text"
+          placeholder="Nhập mã"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
+        <button
+          className="checkout-btn"
+          style={{ flex: "0 0 auto" }}
+          onClick={applyCoupon}
+        >
           Áp dụng
         </button>
       </div>
+      {msg && <p style={{ color: coupon ? "green" : "red" }}>{msg}</p>}
 
       {/* Nút điều hướng */}
       <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>

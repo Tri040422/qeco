@@ -1,5 +1,6 @@
+// src/context/AuthProvider.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api/axios"; // 👉 dùng instance axios.js bạn đã config
 import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
@@ -12,12 +13,10 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // 🔑 Đăng nhập
   const login = async (email, password) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        { email, password }
-      );
+      const res = await axios.post("/auth/login", { email, password });
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
       return { success: true };
@@ -29,12 +28,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 📝 Đăng ký
   const register = async (name, email, password, role = "customer") => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        { name, email, password, role }
-      );
+      const res = await axios.post("/auth/register", {
+        name,
+        email,
+        password,
+        role,
+      });
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
       return { success: true };
@@ -46,28 +48,64 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🚪 Đăng xuất
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
-  // ✅ Xóa tài khoản
+  // ❌ Xóa tài khoản
   const deleteAccount = async () => {
     if (!user?.token) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
+      await axios.delete("/users/me", {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      logout(); // clear state + localStorage
+      logout();
     } catch (err) {
-      console.error("Xóa tài khoản thất bại:", err);
-      throw err;
+      console.log(err);
+      throw new Error("Xóa tài khoản thất bại");
+    }
+  };
+
+  // 📧 Quên mật khẩu
+  const forgotPassword = async (email) => {
+    try {
+      const res = await axios.post("/auth/forgot", { email });
+      return { success: true, message: res.data.message };
+    } catch (err) {
+      return {
+        success: false,
+        message: err?.response?.data?.message || "Không gửi được email",
+      };
+    }
+  };
+
+  // 🔄 Đặt lại mật khẩu
+  const resetPassword = async (token, password) => {
+    try {
+      const res = await axios.post(`/auth/reset/${token}`, { password });
+      return { success: true, message: res.data.message };
+    } catch (err) {
+      return {
+        success: false,
+        message: err?.response?.data?.message || "Đặt lại mật khẩu thất bại",
+      };
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, deleteAccount }}
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        deleteAccount,
+        forgotPassword,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
